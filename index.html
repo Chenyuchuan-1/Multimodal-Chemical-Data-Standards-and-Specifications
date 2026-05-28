@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>多模态化学数据标准规范</title>
+  <meta name="description" content="多模态化学数据库的数据标准规范，覆盖分子数据、化学反应数据与谱图数据。" />
+  <style>
+    :root {
+      --bg: #f5f8fb;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --primary: #1f5f8b;
+      --primary-dark: #143a5a;
+      --accent: #2d9cdb;
+      --line: #d8e3ec;
+      --soft: #eaf4fb;
+      --green: #1f8a70;
+      --orange: #cc7a00;
+      --purple: #6c5ce7;
+      --shadow: 0 18px 45px rgba(31, 95, 139, 0.12);
+      --radius: 18px;
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei",
+        "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(45,156,219,.18), transparent 32rem),
+        linear-gradient(180deg, #f8fbff 0%, var(--bg) 45%, #ffffff 100%);
+      line-height: 1.75;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255,255,255,.86);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(216,227,236,.9);
+    }
+
+    .nav {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 850;
+      color: var(--primary-dark);
+      letter-spacing: .02em;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border-radius: 11px;
+      display: grid;
+      place-items: center;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 8px 20px rgba(31,95,139,.22);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 18px;
+      font-size: 14px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .nav-links a {
+      border-bottom: 2px solid transparent;
+      padding: 6px 0;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+      border-bottom-color: var(--accent);
+    }
+
+    .hero {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 76px 22px 44px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr);
+      gap: 34px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      padding: 7px 13px;
+      border-radius: 999px;
+      color: var(--primary);
+      background: rgba(255,255,255,.78);
+      border: 1px solid rgba(45,156,219,.26);
+      font-size: 14px;
+      font-weight: 750;
+    }
+
+    h1 {
+      margin: 18px 0 18px;
+      font-size: clamp(36px, 5.4vw, 64px);
+      line-height: 1.08;
+      letter-spacing: -.045em;
+      color: #102a43;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 780px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .actions {
+      margin-top: 28px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 750;
+      border: 1px solid transparent;
+      transition: .2s ease;
+    }
+
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      box-shadow: 0 12px 28px rgba(31,95,139,.23);
+    }
+    .btn-secondary {
+      color: var(--primary);
+      background: rgba(255,255,255,.9);
+      border-color: var(--line);
+    }
+
+    .stat-panel {
+      background: rgba(255,255,255,.9);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .total {
+      border-radius: 22px;
+      padding: 24px;
+      color: white;
+      background: linear-gradient(135deg, #113a5c, #1f5f8b);
+      margin-bottom: 16px;
+    }
+
+    .total .label { font-size: 14px; opacity: .82; }
+    .total .number {
+      margin-top: 8px;
+      font-size: clamp(34px, 4vw, 46px);
+      font-weight: 900;
+      letter-spacing: -.03em;
+      line-height: 1.1;
+    }
+
+    .mini-stat {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .mini-stat:last-child { border-bottom: 0; }
+    .mini-stat b { color: #143a5a; }
+    .mini-stat span { color: var(--muted); font-size: 14px; }
+    .mini-stat strong { color: var(--primary); font-size: 18px; white-space: nowrap; }
+
+    main {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 12px 22px 72px;
+    }
+
+    section {
+      margin: 36px 0;
+      scroll-margin-top: 86px;
+    }
+
+    .section-title {
+      margin: 0 0 14px;
+      font-size: 30px;
+      line-height: 1.25;
+      color: #143a5a;
+      letter-spacing: -.02em;
+    }
+
+    .intro {
+      margin: 0 0 22px;
+      color: var(--muted);
+      max-width: 960px;
+    }
+
+    .grid { display: grid; gap: 18px; }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: 0 10px 30px rgba(20,44,68,.06);
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      color: var(--primary-dark);
+      font-size: 21px;
+    }
+
+    .card p { margin: 0; color: var(--muted); }
+
+    .badge {
+      display: inline-flex;
+      border-radius: 999px;
+      padding: 4px 10px;
+      margin-bottom: 12px;
+      background: var(--soft);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 750;
+    }
+
+    .data-card { position: relative; overflow: hidden; }
+    .data-card:before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 5px;
+      background: var(--accent);
+    }
+    .molecule:before { background: var(--green); }
+    .reaction:before { background: var(--orange); }
+    .spectrum:before { background: var(--purple); }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: white;
+      box-shadow: 0 8px 24px rgba(20,44,68,.05);
+      margin-bottom: 24px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 720px;
+    }
+
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      background: #e6f2fb;
+      color: #143b56;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    code {
+      padding: 2px 6px;
+      border-radius: 7px;
+      background: #eef5fa;
+      color: #0e5278;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: .92em;
+    }
+
+    .formula {
+      margin: 14px 0;
+      padding: 18px 20px;
+      border-radius: 16px;
+      background: #0f2f4a;
+      color: #eaf7ff;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    .steps {
+      counter-reset: step;
+      display: grid;
+      gap: 12px;
+    }
+
+    .step {
+      position: relative;
+      padding: 18px 18px 18px 58px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: white;
+    }
+
+    .step:before {
+      counter-increment: step;
+      content: counter(step);
+      position: absolute;
+      left: 18px;
+      top: 18px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--primary);
+      color: white;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .tag {
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: #f0f7fc;
+      color: var(--primary-dark);
+      border: 1px solid #d6e9f6;
+      font-size: 14px;
+    }
+
+    .note {
+      padding: 18px 20px;
+      border-left: 5px solid var(--accent);
+      border-radius: 14px;
+      background: #eff8ff;
+      color: #26475f;
+    }
+
+    footer {
+      padding: 34px 22px;
+      text-align: center;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      background: white;
+    }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; padding-top: 48px; }
+      .grid-3, .grid-2 { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="nav">
+      <a class="brand" href="#top">
+        <span class="brand-mark">M</span>
+        <span>多模态化学数据库</span>
+      </a>
+      <div class="nav-links">
+        <a href="#overview">概览</a>
+        <a href="#types">数据类型</a>
+        <a href="#fields">字段标准</a>
+        <a href="#quality">质量校验</a>
+        <a href="#tasks">适用任务</a>
+        <a href="#pages">发布说明</a>
+      </div>
+    </nav>
+  </header>
+
+  <section id="top" class="hero">
+    <div>
+      <div class="eyebrow">Multimodal Chemical Data Standard</div>
+      <h1>多模态化学数据标准规范</h1>
+      <p>
+        面向分子数据、化学反应数据与谱图数据的统一数据标准，规范字段定义、格式要求、
+        模态关联、质量控制与标准符合度评价方法，可用于项目发布、平台说明、验收材料和数据管理制度。
+      </p>
+      <div class="actions">
+        <a class="btn btn-primary" href="#fields">查看字段标准</a>
+        <a class="btn btn-secondary" href="#pages">GitHub Pages 发布方式</a>
+      </div>
+    </div>
+
+    <aside class="stat-panel">
+      <div class="total">
+        <div class="label">数据库总规模</div>
+        <div class="number">538,046,852</div>
+        <div class="label">条有效多模态化学数据</div>
+      </div>
+      <div class="mini-stat">
+        <div><b>分子数据</b><br><span>SMILES、分子量、LogP、TPSA、HBD、HBA</span></div>
+        <strong>400,000,000</strong>
+      </div>
+      <div class="mini-stat">
+        <div><b>化学反应数据</b><br><span>反应物、试剂、产物、反应条件、三维结构 token、产率</span></div>
+        <strong>32,281,977</strong>
+      </div>
+      <div class="mini-stat">
+        <div><b>谱图数据</b><br><span>SMILES、InChIKey、1H NMR、13C NMR、等价原子类别</span></div>
+        <strong>105,764,875</strong>
+      </div>
+    </aside>
+  </section>
+
+  <main>
+    <section id="overview">
+      <h2 class="section-title">一、标准制定背景</h2>
+      <p class="intro">
+        为支撑分子性质预测、化学反应建模、谱图解析、分子表征学习、相似性检索、产物预测、
+        反应条件预测、逆合成分析、产率预测以及多模态大模型训练等任务，本项目构建了覆盖分子结构、
+        理化性质、化学反应、反应条件、产物结构、产率信息以及核磁共振谱图信息的多模态化学数据库。
+      </p>
+      <div class="grid grid-3">
+        <div class="card">
+          <span class="badge">结构标准化</span>
+          <h3>统一字段与格式</h3>
+          <p>采用统一字段命名、统一数据类型和统一存储格式，支持不同来源数据在同一规范下管理和调用。</p>
+        </div>
+        <div class="card">
+          <span class="badge">模态可关联</span>
+          <h3>跨模态映射</h3>
+          <p>通过 SMILES、canonical SMILES、InChIKey、reaction SMILES 等关键字段建立关联关系。</p>
+        </div>
+        <div class="card">
+          <span class="badge">质量可校验</span>
+          <h3>自动化评价</h3>
+          <p>支持对字段完整性、格式规范性、数据类型、模态对应关系和有效性状态进行自动化检查。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="types">
+      <h2 class="section-title">二、数据类型与规模</h2>
+      <p class="intro">数据库由分子数据、化学反应数据和谱图数据三部分构成，合计 538,046,852 条有效数据。</p>
+      <div class="grid grid-3">
+        <article class="card data-card molecule">
+          <span class="badge">Molecule Data</span>
+          <h3>分子数据</h3>
+          <p>400,000,000 条。描述单个化合物的结构与理化性质，常用于分子表征、性质预测和相似性检索。</p>
+        </article>
+        <article class="card data-card reaction">
+          <span class="badge">Reaction Data</span>
+          <h3>化学反应数据</h3>
+          <p>32,281,977 条。描述反应输入、反应条件、产物结构、数据来源和任务标签。</p>
+        </article>
+        <article class="card data-card spectrum">
+          <span class="badge">Spectrum Data</span>
+          <h3>谱图数据</h3>
+          <p>105,764,875 条。包含分子信息和核磁共振谱图信息，支持谱图预测和结构解析。</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="fields">
+      <h2 class="section-title">三、核心字段标准</h2>
+      <p class="intro">
+        分子数据不包含三维结构字段；三维结构 token 属于化学反应数据中的反应物、试剂或产物结构表示。
+      </p>
+
+      <h3>3.1 分子数据字段</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>字段名称</th><th>字段含义</th><th>主要用途</th></tr></thead>
+          <tbody>
+            <tr><td><code>smiles</code></td><td>分子的 SMILES 线性结构表示，用 ASCII 字符串编码原子、键、支链和环等连接关系。</td><td>分子结构建模、检索与相似性分析</td></tr>
+            <tr><td><code>mol_wt</code></td><td>分子量，通常以 g/mol 计。</td><td>性质预测与分子筛选</td></tr>
+            <tr><td><code>logp</code></td><td>辛醇/水分配系数的对数，反映分子疏水性或脂溶性。</td><td>疏水性、脂溶性与溶解性分析</td></tr>
+            <tr><td><code>tpsa</code></td><td>拓扑极性表面积，反映极性原子贡献的表面积。</td><td>极性、渗透性与相互作用分析</td></tr>
+            <tr><td><code>hbd</code></td><td>氢键供体数量。</td><td>分子相互作用与性质建模</td></tr>
+            <tr><td><code>hba</code></td><td>氢键受体数量。</td><td>氢键、极性特征与性质建模</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>3.2 化学反应数据字段</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>字段名称</th><th>字段含义</th><th>主要用途</th></tr></thead>
+          <tbody>
+            <tr><td><code>dataset</code></td><td>数据集名称，例如 USPTO_MIT、USPTO_Condition、USPTO_50k、Reaxys、pistachio、Buchwald-Hartwig 等。</td><td>数据追溯、任务划分与来源区分</td></tr>
+            <tr><td><code>reactant_1d_smiles</code></td><td>反应物一维 SMILES。</td><td>反应物结构输入</td></tr>
+            <tr><td><code>reactant_3d_smiles</code></td><td>反应物三维结构 token。</td><td>反应物空间构象输入</td></tr>
+            <tr><td><code>reagent_1d_smiles</code></td><td>试剂、溶剂、催化剂、碱等一维 SMILES。</td><td>反应条件建模</td></tr>
+            <tr><td><code>reagent_3d_smiles</code></td><td>试剂或条件分子的三维结构 token。</td><td>条件分子空间结构建模</td></tr>
+            <tr><td><code>product_1d_smiles</code></td><td>产物一维 SMILES。</td><td>产物预测与结构表示</td></tr>
+            <tr><td><code>product_3d_smiles</code></td><td>产物三维结构 token。</td><td>产物空间构象建模</td></tr>
+            <tr><td><code>reaction_smiles</code></td><td>完整反应 SMILES，格式为 <code>reactants&gt;reagents&gt;products</code>。</td><td>反应级别统一表示</td></tr>
+            <tr><td><code>yield</code> / <code>target</code></td><td>反应产率或模型预测目标。</td><td>产率预测与监督学习标签</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>3.3 谱图数据字段</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>字段名称</th><th>字段含义</th><th>主要用途</th></tr></thead>
+          <tbody>
+            <tr><td><code>smiles</code></td><td>原始 SMILES 分子结构字符串。</td><td>分子结构输入</td></tr>
+            <tr><td><code>canonical_smiles</code></td><td>标准化 SMILES。</td><td>去重、检索与模型输入</td></tr>
+            <tr><td><code>inchikey</code></td><td>分子唯一标识符。</td><td>跨数据库检索与分子匹配</td></tr>
+            <tr><td><code>H_nmr</code></td><td>预测 1H NMR 化学位移列表，单位 ppm。</td><td>氢谱预测与解析</td></tr>
+            <tr><td><code>C_nmr</code></td><td>预测 13C NMR 化学位移列表，单位 ppm。</td><td>碳谱预测与解析</td></tr>
+            <tr><td><code>nmr_predict</code></td><td>完整 NMR 预测序列，单位 ppm。</td><td>统一谱图建模与预测</td></tr>
+            <tr><td><code>atom_index</code></td><td>原子类型或原子序数列表。</td><td>原子级谱图关联</td></tr>
+            <tr><td><code>equi_class</code></td><td>等价原子类别编号。</td><td>等价原子识别与谱峰归属</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="quality">
+      <h2 class="section-title">四、数据质量控制与评价方法</h2>
+      <p class="intro">质量控制主要围绕有效数据总量、标准符合率、字段完整性、格式规范性和模态对齐关系展开。</p>
+      <div class="grid grid-2">
+        <div class="card">
+          <h3>有效数据总量</h3>
+          <p>Total Valid Records，记为 <code>Ntotal</code>，表示经过清洗去重且状态标记为有效的数据记录总数。</p>
+          <div class="formula">Ntotal = Σ Count(Tablei), i = 1, 2, ..., M</div>
+        </div>
+        <div class="card">
+          <h3>标准符合率</h3>
+          <p>Standard Compliance Rate，记为 <code>Rcompliance</code>，表示随机抽样数据中完全符合标准规范的样本比例。</p>
+          <div class="formula">Rcompliance = Npass / Nsample × 100%</div>
+        </div>
+      </div>
+
+      <h3>抽样校验流程</h3>
+      <div class="steps">
+        <div class="step">通过数据库管理工具或统计脚本连接至数据存储环境。</div>
+        <div class="step">针对核心数据表执行全量去重计数操作。</div>
+        <div class="step">统计唯一有效数据总量，验证数据规模是否达标。</div>
+        <div class="step">采用分层随机抽样方法抽取样本，例如 1000 条。</div>
+        <div class="step">按照多模态数据标准规范对样本进行自动化校验。</div>
+        <div class="step">检查字段完整性、格式规范性、数据类型和模态关联关系。</div>
+        <div class="step">计算有效数据总量和标准符合率，并输出数据质量评估报告。</div>
+      </div>
+    </section>
+
+    <section id="tasks">
+      <h2 class="section-title">五、适用任务</h2>
+      <p class="intro">本数据库可支撑从分子级别到反应级别、谱图级别的多任务建模，也可作为多模态大模型训练与智能体工具调用的数据基础。</p>
+      <div class="tag-list">
+        <span class="tag">分子性质预测</span>
+        <span class="tag">分子相似性检索</span>
+        <span class="tag">分子表征学习</span>
+        <span class="tag">虚拟筛选</span>
+        <span class="tag">反应产物预测</span>
+        <span class="tag">反应条件预测</span>
+        <span class="tag">逆合成分析</span>
+        <span class="tag">反应产率预测</span>
+        <span class="tag">核磁谱图预测</span>
+        <span class="tag">核磁谱图解析</span>
+        <span class="tag">分子-谱图多模态对齐</span>
+        <span class="tag">多模态大模型训练</span>
+      </div>
+    </section>
+
+    <section id="pages">
+      <h2 class="section-title">六、GitHub Pages 发布说明</h2>
+      <div class="note">
+        将本页面文件命名为 <code>index.html</code>，上传到 GitHub 仓库根目录，然后在仓库
+        <code>Settings → Pages</code> 中选择部署分支，即可通过 GitHub Pages 发布为网页。
+      </div>
+      <div class="grid grid-2" style="margin-top:18px;">
+        <div class="card">
+          <h3>推荐仓库结构</h3>
+          <div class="formula">multimodal-chemical-database/
+├── index.html
+├── README.md
+└── docs/
+    └── multimodal_data_standard.md</div>
+        </div>
+        <div class="card">
+          <h3>发布步骤</h3>
+          <p>
+            新建 GitHub 仓库并上传 <code>index.html</code>；进入 <code>Settings → Pages</code>；
+            Source 选择 <code>Deploy from a branch</code>，Branch 选择 <code>main</code> 和 <code>/root</code>；
+            保存后等待部署完成。
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    多模态化学数据标准规范 · 分子数据 · 化学反应数据 · 谱图数据
+  </footer>
+</body>
+</html>
