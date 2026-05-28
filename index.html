@@ -414,6 +414,7 @@
       </p>
       <div class="actions">
         <a class="btn btn-primary" href="#fields">查看字段标准</a>
+        <a class="btn btn-secondary" href="./多模态化学数据标准规范.docx" download>下载 Word 版本</a>
         <a class="btn btn-secondary" href="#pages">GitHub Pages 发布方式</a>
       </div>
     </div>
@@ -595,14 +596,17 @@
     <section id="pages">
       <h2 class="section-title">六、GitHub Pages 发布说明</h2>
       <div class="note">
-        将本页面文件命名为 <code>index.html</code>，上传到 GitHub 仓库根目录，然后在仓库
-        <code>Settings → Pages</code> 中选择部署分支，即可通过 GitHub Pages 发布为网页。
+        将本页面文件命名为 <code>index.html</code>，并将 Word 文档
+        <code>多模态化学数据标准规范.docx</code> 放在同一仓库根目录下。网页中的
+        “下载 Word 版本”按钮会通过相对路径 <code>./多模态化学数据标准规范.docx</code>
+        直接下载该文件。随后在仓库 <code>Settings → Pages</code> 中选择部署分支，即可通过 GitHub Pages 发布为网页。
       </div>
       <div class="grid grid-2" style="margin-top:18px;">
         <div class="card">
           <h3>推荐仓库结构</h3>
           <div class="formula">multimodal-chemical-database/
 ├── index.html
+├── 多模态化学数据标准规范.docx
 ├── README.md
 └── docs/
     └── multimodal_data_standard.md</div>
